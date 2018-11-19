@@ -1,6 +1,6 @@
-import numpy as np          # Importing the numpy package is not necessary since the cv2 package uses it automaticaly.
-import cv2                  # Importing the cv2 package to get access to it.
-import pickle               # Importing the pickle module to get access to it.
+import numpy as np  # Importing the numpy package is not necessary since the cv2 package uses it automaticaly.
+import cv2  # Importing the cv2 package to get access to it.
+import pickle  # Importing the pickle module to get access to it.
 
 
 def make_1080p():
@@ -70,6 +70,8 @@ def get_dims(res='1080p'):
 count0 = 0
 count1 = 0
 count2 = 0
+checked = 0
+person = ''
 # Setting face cascade classifiers.
 face_cascade = cv2.CascadeClassifier('cascades/data/haarcascade_frontalface_alt2.xml')
 eye_cascade = cv2.CascadeClassifier('cascades/data/haarcascade_eye.xml')
@@ -87,9 +89,10 @@ with open("labels.pickle", 'rb') as f:
     og_labels = pickle.load(f)
     labels = {v: k for k, v in og_labels.items()}
 
-cap = cv2.VideoCapture(0)       # Creating a video capture object that takes the default camera as the input referenced.
+cap = cv2.VideoCapture(0)    # Creating a video capture object that takes the default camera
+                                                    # as the input referenced.
 
-make_1080p()                    # Setting the resolution of the video capture object to 1080p.
+make_1080p()  # Setting the resolution of the video capture object to 1080p.
 
 # The while loop to execute all the necessary actions frame-by-frame.
 while True:
@@ -104,7 +107,7 @@ while True:
 
         # recognition? deep learned model predict keras tensorflow pytorch scikit learn.
         id_, conf = recognizer.predict(roi_gray)
-        if 35 <= conf <= 65:  # and conf<=85:
+        if 35 <= conf:  # <= 70:  # and conf<=85:
             print(conf)
             # print(id_)
             # print(labels[id_])
@@ -113,148 +116,154 @@ while True:
             name = labels[id_]
             color = (255, 255, 255)
             stroke = 2
-            cv2.putText(frame, name, (x, y), font, 1, color, stroke, cv2.LINE_AA)
 
-            if name == 'angel':
-                ri, pic = cap.read()
-                if ri:
-                    cv2.imwrite('images/Angel/now.jpg', pic)
-                    if count0 < 10:
-                        cv2.imwrite('images/Angel/now' + str(count0) + '.jpg', pic)
-                        count0 += 1
-            elif name == 'loymi':
-                ri, pic = cap.read()
-                if ri:
-                    cv2.imwrite('images/Angel/now.jpg', pic)
-                    if count1 < 10:
-                        cv2.imwrite('images/Loymi/now' + str(count1) + '.jpg', pic)
-                        count1 += 1
-            elif name == 'yao':
-                ri, pic = cap.read()
-                if ret:
-                    cv2.imwrite('images/Angel/now.jpg', pic)
-                    if count2 < 10:
-                        cv2.imwrite('images/Yao/now' + str(count2) + '.jpg', pic)
-                        count2 += 1
+            if checked == 0 or person == name:
 
-        img_item = "my-image.png"
-        cv2.imwrite(img_item, roi_gray)
+                if checked == 0:
+                    checked += 1
+                    person = name
 
-        color = (255, 0, 0)  # BGR 0-255
-        stroke = 2
-        end_cord_x = x + w
-        end_cord_y = y + h
-        cv2.rectangle(frame, (x, y), (end_cord_x, end_cord_y), color, stroke)
+                cv2.putText(frame, name, (x, y), font, 1, color, stroke, cv2.LINE_AA)
+                if name == 'angel':
+                    ri, pic = cap.read()
+                    if ri:
+                        cv2.imwrite('images/Angel/now.jpg', pic)
+                        if count0 < 10:
+                            cv2.imwrite('images/Angel/now' + str(count0) + '.jpg', pic)
+                            count0 += 1
+                elif name == 'loymi':
+                    ri, pic = cap.read()
+                    if ri:
+                        cv2.imwrite('images/Angel/now.jpg', pic)
+                        if count1 < 10:
+                            cv2.imwrite('images/Loymi/now' + str(count1) + '.jpg', pic)
+                            count1 += 1
+                elif name == 'yao':
+                    ri, pic = cap.read()
+                    if ret:
+                        cv2.imwrite('images/Angel/now.jpg', pic)
+                        if count2 < 10:
+                            cv2.imwrite('images/Yao/now' + str(count2) + '.jpg', pic)
+                            count2 += 1
 
-        center_color = (0, 0, 255)
-        center_stroke = 1
-        center_cord_x = 550
-        center_cord_y = 225
-        center_w = 225
-        center_h = 225
-        center_end_cord_x = center_cord_x + 225
-        center_end_cord_y = center_cord_y + 225
-        cv2.rectangle(frame, (center_cord_x, center_cord_y), (center_end_cord_x, center_end_cord_y),
-                      center_color, center_stroke)
+                img_item = "my-image.png"
+                cv2.imwrite(img_item, roi_gray)
 
-        if x < center_cord_x:
-            print('Move left')
+                color = (255, 0, 0)  # BGR 0-255
+                stroke = 2
+                end_cord_x = x + w
+                end_cord_y = y + h
+                cv2.rectangle(frame, (x, y), (end_cord_x, end_cord_y), color, stroke)
 
-            if y < center_cord_y:
-                print('Move down')
-                if w < center_w or h < center_h:
-                    print('Get closer')
-                elif w > center_w or h > center_h:
-                    print('Get away')
+                center_color = (0, 0, 255)
+                center_stroke = 1
+                center_cord_x = 550
+                center_cord_y = 225
+                center_w = 225
+                center_h = 225
+                center_end_cord_x = center_cord_x + 225
+                center_end_cord_y = center_cord_y + 225
+                cv2.rectangle(frame, (center_cord_x, center_cord_y), (center_end_cord_x, center_end_cord_y),
+                              center_color, center_stroke)
+
+                if x < center_cord_x:
+                    print('Move left')
+
+                    if y < center_cord_y:
+                        print('Move down')
+                        if w < center_w or h < center_h:
+                            print('Get closer')
+                        elif w > center_w or h > center_h:
+                            print('Get away')
+                        else:
+                            print('PERFECT')
+
+                    elif y > center_cord_y:
+                        print('Move up')
+                        if w < center_w or h < center_h:
+                            print('Get closer')
+                        elif w > center_w or h > center_h:
+                            print('Get away')
+                        else:
+                            print('PERFECT')
+
+                    else:
+                        print('PERFECT')
+                        if w < center_w or h < center_h:
+                            print('Get closer')
+                        elif w > center_w or h > center_h:
+                            print('Get away')
+                        else:
+                            print('PERFECT')
+
+                elif x > center_cord_x:
+                    print('Move right')
+
+                    if y < center_cord_y:
+                        print('Move down')
+                        if w < center_w or h < center_h:
+                            print('Get closer')
+                        elif w > center_w or h > center_h:
+                            print('Get away')
+                        else:
+                            print('PERFECT')
+
+                    elif y > center_cord_y:
+                        print('Move up')
+                        if w < center_w or h < center_h:
+                            print('Get closer')
+                        elif w > center_w or h > center_h:
+                            print('Get away')
+                        else:
+                            print('PERFECT')
+
+                    else:
+                        print('PERFECT')
+                        if w < center_w or h < center_h:
+                            print('Get closer')
+                        elif w > center_w or h > center_h:
+                            print('Get away')
+                        else:
+                            print('PERFECT')
                 else:
-                    print('PERFECT')
+                    if y < center_cord_y:
+                        print('Move down')
+                        if w < center_w or h < center_h:
+                            print('Get closer')
+                        elif w > center_w or h > center_h:
+                            print('Get away')
+                        else:
+                            print('PERFECT')
 
-            elif y > center_cord_y:
-                print('Move up')
-                if w < center_w or h < center_h:
-                    print('Get closer')
-                elif w > center_w or h > center_h:
-                    print('Get away')
-                else:
-                    print('PERFECT')
+                    elif y > center_cord_y:
+                        print('Move up')
+                        if w < center_w or h < center_h:
+                            print('Get closer')
+                        elif w > center_w or h > center_h:
+                            print('Get away')
+                        else:
+                            print('PERFECT')
 
-            else:
-                print('PERFECT')
-                if w < center_w or h < center_h:
-                    print('Get closer')
-                elif w > center_w or h > center_h:
-                    print('Get away')
-                else:
-                    print('PERFECT')
+                    else:
+                        print('PERFECT')
+                        if w < center_w or h < center_h:
+                            print('Get closer')
+                        elif w > center_w or h > center_h:
+                            print('Get away')
+                        else:
+                            print('PERFECT')
 
-        elif x > center_cord_x:
-            print('Move right')
+                    # Detecting where are the eyes located inside the gray frame.
+                    eyes = eye_cascade.detectMultiScale(roi_gray)
+                    # Drawing the rectangles around the eyes.
+                    for (ex, ey, ew, eh) in eyes:
+                        cv2.rectangle(roi_color, (ex, ey), (ex + ew, ey + eh), (0, 255, 0), 2)
 
-            if y < center_cord_y:
-                print('Move down')
-                if w < center_w or h < center_h:
-                    print('Get closer')
-                elif w > center_w or h > center_h:
-                    print('Get away')
-                else:
-                    print('PERFECT')
-
-            elif y > center_cord_y:
-                print('Move up')
-                if w < center_w or h < center_h:
-                    print('Get closer')
-                elif w > center_w or h > center_h:
-                    print('Get away')
-                else:
-                    print('PERFECT')
-
-            else:
-                print('PERFECT')
-                if w < center_w or h < center_h:
-                    print('Get closer')
-                elif w > center_w or h > center_h:
-                    print('Get away')
-                else:
-                    print('PERFECT')
-        else:
-            if y < center_cord_y:
-                print('Move down')
-                if w < center_w or h < center_h:
-                    print('Get closer')
-                elif w > center_w or h > center_h:
-                    print('Get away')
-                else:
-                    print('PERFECT')
-
-            elif y > center_cord_y:
-                print('Move up')
-                if w < center_w or h < center_h:
-                    print('Get closer')
-                elif w > center_w or h > center_h:
-                    print('Get away')
-                else:
-                    print('PERFECT')
-
-            else:
-                print('PERFECT')
-                if w < center_w or h < center_h:
-                    print('Get closer')
-                elif w > center_w or h > center_h:
-                    print('Get away')
-                else:
-                    print('PERFECT')
-
-        # Detecting where are the eyes located inside the gray frame.
-        eyes = eye_cascade.detectMultiScale(roi_gray)
-        # Drawing the rectangles around the eyes.
-        for (ex, ey, ew, eh) in eyes:
-            cv2.rectangle(roi_color, (ex, ey), (ex + ew, ey + eh), (0, 255, 0), 2)
-
-        # Detecting where is the smile located inside the gray frame.
-        smile = smile_cascade.detectMultiScale(roi_gray)
-        # Drawing the rectangle around the smile.
-        for (sx, sy, sw, sh) in smile:
-            cv2.rectangle(roi_color, (sx, sy), (sx + sw, sy + sh), (0, 0, 255), 2)
+                    # Detecting where is the smile located inside the gray frame.
+                    smile = smile_cascade.detectMultiScale(roi_gray)
+                    # Drawing the rectangle around the smile.
+                    for (sx, sy, sw, sh) in smile:
+                        cv2.rectangle(roi_color, (sx, sy), (sx + sw, sy + sh), (0, 0, 255), 2)
 
     # Display the resulting frame
     cv2.imshow('frame', frame)
@@ -262,5 +271,9 @@ while True:
     if cv2.waitKey(20) & 0xFF == ord('q'):
         break
 
-cap.release()               # When everything done, release the capture.
-cv2.destroyAllWindows()     # Destroying all created windows after the frame has been closed.
+    elif cv2.waitKey(20) & 0xFF == ord('a'):
+        checked = 0
+        person = ''
+
+cap.release()  # When everything done, release the capture.
+cv2.destroyAllWindows()  # Destroying all created windows after the frame has been closed.

@@ -5,9 +5,9 @@ from pyardrone import ARDrone
 
 
 class DroneInterface:
-    '''
-    A simple
-    '''
+    """
+    Builds a simple UI for manual drone control.
+    """
 
     def __init__(self, master):
 
@@ -22,7 +22,7 @@ class DroneInterface:
         self.btn_land.grid(row=1, column=0, columnspan=2)
 
         #row 2
-        self.cbx_manual = Checkbutton(master, text="Enable manual control (placeholder)")
+        self.cbx_manual = Checkbutton(master, text="Enable manual control")
         self.cbx_manual.grid(row=2, column=0)
 
         self.btn_forward = Button(master, text="Forward", command=self.move_front)

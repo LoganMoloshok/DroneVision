@@ -27,15 +27,6 @@ def verify_image(img_file):
         return False
     return True
 
-
-def make_720p():
-    """
-    The make_720p function sets the resolution of the screen to 720p.
-    """
-    cam.set(3, 1280)
-    cam.set(4, 720)
-
-
 def access_camera():
     """
     The access_camera function accesses the camera to get the given frame.
@@ -113,11 +104,12 @@ def save_and_show():
                         print("move down")
                         pwr_down = power
 
-                    # TODO: figure out why move back is not working
                     if h > int(cam.get(cv2.CAP_PROP_FRAME_HEIGHT) * 0.6):
                         print("move back!")
+                        pwr_forward = power
                     elif h < int(cam.get(cv2.CAP_PROP_FRAME_HEIGHT) * 0.3):
                         print("move forward")
+                        pwr_forward = power
 
                     # Draw various boundaries
                     # face
